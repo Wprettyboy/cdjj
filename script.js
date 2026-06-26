@@ -2,6 +2,10 @@
   const navToggle = document.querySelector(".nav-toggle");
   const mobileNav = document.querySelector(".mobile-nav");
   const navLinks = document.querySelectorAll(".primary-nav a, .mobile-nav a");
+  const anchorNavLinks = Array.from(navLinks).filter((link) => {
+    const href = link.getAttribute("href") || "";
+    return href.startsWith("#");
+  });
   const filterButtons = document.querySelectorAll(".filter-tabs button");
   const scenarioCards = document.querySelectorAll(".scenario-card");
   const floatingQQ = document.querySelector(".float-qq");
@@ -65,7 +69,7 @@
       const { reduceMotion, desktop } = context.conditions;
 
       if (reduceMotion) {
-        gsap.set(".hero-copy, .hero-visual, .hero-collage-img, .home-service-card, .home-process-panel, .home-advantages-panel, .service-card, .workflow article, .scenario-card, .matrix-card, .process-card", {
+        gsap.set(".hero-copy, .hero-visual, .hero-collage-img, .home-service-card, .home-process-panel, .home-advantages-panel, .service-card, .workflow article, .scenario-card, .matrix-card, .process-card, .service-hero-copy, .service-hero-visual, .landing-card-grid article, .step-list article, .answer-panel", {
           clearProps: "all"
         });
         return;
@@ -84,6 +88,18 @@
         .from(".hero-collage-img", { y: 18, scale: 0.985, autoAlpha: 0 }, 0.26)
         .from(".home-service-card", { y: 20, autoAlpha: 0, stagger: 0.045 }, 0.62)
         .from(".home-process-panel, .home-advantages-panel, .home-faq-panel, .home-deliver-panel", { y: 20, autoAlpha: 0, stagger: 0.06 }, 0.76);
+
+      gsap.from(".service-hero-copy > *", { y: 22, autoAlpha: 0, stagger: 0.08, duration: 0.6 }, 0.14);
+      gsap.from(".service-hero-visual", { y: 28, scale: 0.985, autoAlpha: 0, duration: 0.68 }, 0.22);
+      gsap.from(".answer-panel", {
+        y: 22,
+        autoAlpha: 0,
+        scrollTrigger: {
+          trigger: ".answer-panel",
+          start: "top 84%",
+          toggleActions: "play none none reverse"
+        }
+      });
 
       if (desktop) {
         gsap.to(".hero-collage-img", {
@@ -105,6 +121,19 @@
             y: 36,
             autoAlpha: 0,
             stagger: 0.09,
+            overwrite: true
+          });
+        }
+      });
+
+      ScrollTrigger.batch(".landing-card-grid article, .step-list article", {
+        start: "top 84%",
+        once: true,
+        onEnter: (batch) => {
+          gsap.from(batch, {
+            y: 28,
+            autoAlpha: 0,
+            stagger: 0.07,
             overwrite: true
           });
         }
@@ -190,7 +219,7 @@
       onToggle: (self) => {
         if (!self.isActive) return;
         const id = section.getAttribute("id");
-        navLinks.forEach((link) => {
+        anchorNavLinks.forEach((link) => {
           const isActive = link.getAttribute("href") === `#${id}`;
           link.classList.toggle("is-active", isActive);
         });
